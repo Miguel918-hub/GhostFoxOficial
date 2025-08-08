@@ -64,6 +64,7 @@
     font-weight: 700;
     color: #022;
     user-select: none;
+    font-size: 30px;
   }
   h1 {
     font-size: 18px;
@@ -215,7 +216,7 @@
   <div class="wrap">
     <div class="card">
       <header>
-        <div class="logo">🦊</div>
+        <div class="logo" aria-label="Logo Kitsune Paste">🦊</div>
         <div>
           <h1>🦊 Kitsune Paste — Clone</h1>
           <p class="lead">Cole seu código, escolha a linguagem e compartilhe via URL (sem servidor).</p>
@@ -248,29 +249,25 @@
       <textarea id="editor" placeholder="// Cole seu código aqui..."></textarea>
 
       <div class="actions">
-        <button class="primary" id="saveBtn" type="button">Salvar & Gerar Link</button>
-        <button id="rawBtn" class="ghost" type="button">Abrir Script 🦊 (RAW)</button>
-        <button id="copyBtn" type="button">Copiar</button>
-        <button id="downloadBtn" type="button">Download</button>
-        <button id="clearBtn" class="warn" type="button">Limpar</button>
-        <button id="themeBtn" style="margin-left: auto" class="ghost" type="button">
+        <button class="primary" id="saveBtn" type="button" title="Salvar e gerar URL para compartilhar">Salvar & Gerar Link</button>
+        <button id="rawBtn" class="ghost" type="button" title="Abrir conteúdo RAW em nova aba">Abrir Script 🦊 (RAW)</button>
+        <button id="copyBtn" type="button" title="Copiar conteúdo para área de transferência">Copiar</button>
+        <button id="downloadBtn" type="button" title="Download do arquivo">Download</button>
+        <button id="clearBtn" class="warn" type="button" title="Limpar tudo">Limpar</button>
+        <button id="themeBtn" style="margin-left: auto" class="ghost" type="button" title="Alternar tema claro/escuro">
           Alternar Tema
         </button>
       </div>
 
       <footer>
-        <div
-          style="display: flex; justify-content: space-between; align-items: center"
-        >
-          <div class="small">
-            Compartilhe a URL gerada — o conteúdo fica codificado na hash.
-          </div>
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <div class="small">Compartilhe a URL gerada — o conteúdo fica codificado na hash.</div>
           <div class="small">Local only • Sem servidor</div>
         </div>
       </footer>
     </div>
 
-    <div class="card">
+    <div class="card" aria-live="polite" aria-atomic="true">
       <div class="meta">
         <div>
           <div style="display: flex; gap: 8px; align-items: center">
@@ -281,31 +278,22 @@
         <div class="small" id="hashInfo">URL: —</div>
       </div>
 
-      <div class="preview" id="preview">
+      <div class="preview" id="preview" role="region" aria-label="Preview do conteúdo do paste">
         <pre id="highlight"><code id="codeBlock" class="language-text">Cole ou gere um paste para visualizar aqui...</code></pre>
       </div>
 
-      <div
-        style="
-          display: flex;
-          justify-content: space-between;
-          margin-top: 10px;
-          align-items: center;
-        "
-      >
-        <div class="small">
-          Preview com destaque simples (funciona melhor para JS/Python/Lua/HTML/CSS)
-        </div>
+      <div style="display: flex; justify-content: space-between; margin-top: 10px; align-items: center;">
+        <div class="small">Preview com destaque simples (funciona melhor para JS/Python/Lua/HTML/CSS)</div>
         <div>
-          <button id="downloadRaw" class="ghost" type="button">Baixar RAW</button>
-          <button id="openRaw" class="ghost" type="button">Abrir RAW em nova aba</button>
+          <button id="downloadRaw" class="ghost" type="button" title="Download do conteúdo RAW">Baixar RAW</button>
+          <button id="openRaw" class="ghost" type="button" title="Abrir conteúdo RAW em nova aba">Abrir RAW em nova aba</button>
         </div>
       </div>
     </div>
   </div>
 
 <script>
-  // Helpers
+(() => {
   const $ = (id) => document.getElementById(id);
   const editor = $("editor");
   const codeBlock = $("codeBlock");
@@ -315,20 +303,21 @@
   const langSelect = $("lang");
   const titleInput = $("title");
   const expansionSelect = $("expansion");
+  const themeBtn = $("themeBtn");
 
-  // Base64 encode/decode helpers
+  // Base64 encode/decode safe
   function b64enc(s) {
     return btoa(unescape(encodeURIComponent(s)));
   }
   function b64dec(s) {
     try {
       return decodeURIComponent(escape(atob(s)));
-    } catch (e) {
+    } catch {
       return null;
     }
   }
 
-  // Atualiza a hash da URL com os dados codificados
+  // Atualiza a hash da URL com os dados
   function setHashFromData(obj) {
     const json = JSON.stringify(obj);
     const b = b64enc(json);
@@ -336,7 +325,7 @@
     updateHashInfo();
   }
 
-  // Lê dados da hash atual da URL e decodifica
+  // Lê dados da hash da URL
   function readDataFromHash() {
     if (!location.hash) return null;
     const b = location.hash.slice(1);
@@ -344,12 +333,12 @@
     if (!json) return null;
     try {
       return JSON.parse(json);
-    } catch (e) {
+    } catch {
       return null;
     }
   }
 
-  // Atualiza texto informativo sobre hash
+  // Atualiza texto da hash na UI
   function updateHashInfo() {
     if (location.hash) {
       const short = location.hash.slice(1, 9);
@@ -359,62 +348,54 @@
     }
   }
 
-  // Escape simples para HTML
+  // Escape HTML básico
   function escapeHtml(str) {
-    return str
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;");
+    return str.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
   }
 
-  // Highlight simples para algumas linguagens
+  // Highlighters simples para algumas linguagens
   const HIGHLIGHTERS = {
-    javascript: (str) => {
-      return escapeHtml(str)
+    javascript: (s) =>
+      escapeHtml(s)
         .replace(/(\/\/.*$)/gm, '<span class="tok-cm">$1</span>')
         .replace(/(".*?"|'.*?'|`.*?`)/g, '<span class="tok-str">$1</span>')
         .replace(
           /\b(const|let|var|function|return|if|else|for|while|switch|case|break|continue|new|class|extends|import|from|export|await|async|try|catch)\b/g,
           '<span class="tok-k">$1</span>'
         )
-        .replace(/\b([A-Za-z_]\w*)(?=\s*\()/g, '<span class="tok-fn">$1</span>');
-    },
-    lua: (str) => {
-      return escapeHtml(str)
+        .replace(/\b([A-Za-z_]\w*)(?=\s*\()/g, '<span class="tok-fn">$1</span>'),
+    lua: (s) =>
+      escapeHtml(s)
         .replace(/(--.*$)/gm, '<span class="tok-cm">$1</span>')
         .replace(/(".*?"|'.*?')/g, '<span class="tok-str">$1</span>')
         .replace(
           /\b(local|function|end|if|then|else|for|in|while|do|repeat|until|return|nil|true|false)\b/g,
           '<span class="tok-k">$1</span>'
         )
-        .replace(/\b([A-Za-z_]\w*)(?=\s*\()/g, '<span class="tok-fn">$1</span>');
-    },
-    python: (str) => {
-      return escapeHtml(str)
+        .replace(/\b([A-Za-z_]\w*)(?=\s*\()/g, '<span class="tok-fn">$1</span>'),
+    python: (s) =>
+      escapeHtml(s)
         .replace(/(#.*$)/gm, '<span class="tok-cm">$1</span>')
         .replace(/(".*?"|'.*?')/g, '<span class="tok-str">$1</span>')
         .replace(
           /\b(def|class|return|if|elif|else|for|while|try|except|with|as|import|from|pass|break|continue|lambda|True|False|None)\b/g,
           '<span class="tok-k">$1</span>'
         )
-        .replace(/\b([A-Za-z_]\w*)(?=\s*\()/g, '<span class="tok-fn">$1</span>');
-    },
-    html: (str) => {
-      return escapeHtml(str)
+        .replace(/\b([A-Za-z_]\w*)(?=\s*\()/g, '<span class="tok-fn">$1</span>'),
+    html: (s) =>
+      escapeHtml(s)
         .replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span class="tok-cm">$1</span>')
         .replace(/(&lt;\/?[^\s&]+?)(\s|&gt;)/g, '<span class="tok-k">$1</span>$2')
-        .replace(/(".*?"|'.*?')/g, '<span class="tok-str">$1</span>');
-    },
-    css: (str) => {
-      return escapeHtml(str)
+        .replace(/(".*?"|'.*?')/g, '<span class="tok-str">$1</span>'),
+    css: (s) =>
+      escapeHtml(s)
         .replace(/(\/\*[\s\S]*?\*\/)/g, '<span class="tok-cm">$1</span>')
         .replace(/([.#]?[a-zA-Z0-9\-\_]+)(?=\s*\{)/g, '<span class="tok-k">$1</span>')
-        .replace(/(:\s*)([^;}\n]+)/g, '$1<span class="tok-str">$2</span>');
-    },
-    default: (str) => escapeHtml(str),
+        .replace(/(:\s*)([^;}\n]+)/g, '$1<span class="tok-str">$2</span>'),
+    default: (s) => escapeHtml(s),
   };
 
-  // Detecta linguagem básica pelo conteúdo
+  // Detecta linguagem básica
   function detectLang(text) {
     const t = text.slice(0, 2000).toLowerCase();
     if (t.includes("<?php") || /<\s*html/.test(t)) return "html";
@@ -426,19 +407,9 @@
     return "text";
   }
 
-  // Highlight wrapper
-  function highlightText(lang, text) {
-    const fn = HIGHLIGHTERS[lang] || HIGHLIGHTERS.default;
-    try {
-      return fn(text);
-    } catch {
-      return escapeHtml(text);
-    }
-  }
-
-  // Renderiza o preview com highlight
+  // Renderiza preview com destaque
   function renderPreview() {
-    const maxPreviewLength = 10000; // Limite de caracteres para o preview
+    const maxPreviewLength = 10000;
     const lang = langSelect.value === "auto" ? detectLang(editor.value) : langSelect.value;
     badgeLang.textContent = lang;
     pasteTitle.textContent = titleInput.value || "—";
@@ -446,15 +417,4 @@
     if (editor.value.length > maxPreviewLength) {
       codeBlock.innerHTML = `<i>Conteúdo muito grande para exibir preview (mais de ${maxPreviewLength} caracteres).</i>`;
     } else {
-      const html = highlightText(lang, editor.value || " ");
-      codeBlock.innerHTML = html;
-    }
-  }
-
-  // Copiar para a área de transferência
-  async function copyToClipboard() {
-    try {
-      await navigator.clipboard.writeText(editor.value);
-      alert("Copiado para a área de transferência.");
-    } catch {
-      prompt("Copiar
+      const html = (HIGHLIGHTERS[lang] || HIGHLIGHTERS.default)(editor.value || "
