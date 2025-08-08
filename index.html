@@ -13,7 +13,7 @@
     --danger: #ff6b6b;
     --glass: rgba(255, 255, 255, 0.03);
     font-family: Inter, ui-sans-serif, system-ui, -apple-system,
-      "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   }
   * {
     box-sizing: border-box;
@@ -281,14 +281,6 @@
       <div class="preview" id="preview" role="region" aria-label="Preview do conteúdo do paste">
         <pre id="highlight"><code id="codeBlock" class="language-text">Cole ou gere um paste para visualizar aqui...</code></pre>
       </div>
-
-      <div style="display: flex; justify-content: space-between; margin-top: 10px; align-items: center;">
-        <div class="small">Preview com destaque simples (funciona melhor para JS/Python/Lua/HTML/CSS)</div>
-        <div>
-          <button id="downloadRaw" class="ghost" type="button" title="Download do conteúdo RAW">Baixar RAW</button>
-          <button id="openRaw" class="ghost" type="button" title="Abrir conteúdo RAW em nova aba">Abrir RAW em nova aba</button>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -305,7 +297,7 @@
   const expansionSelect = $("expansion");
   const themeBtn = $("themeBtn");
 
-  // Base64 encode/decode safe
+  // Base64 encode/decode com tratamento para unicode
   function b64enc(s) {
     return btoa(unescape(encodeURIComponent(s)));
   }
@@ -317,7 +309,7 @@
     }
   }
 
-  // Atualiza a hash da URL com os dados
+  // Atualiza hash da URL com dados serializados
   function setHashFromData(obj) {
     const json = JSON.stringify(obj);
     const b = b64enc(json);
@@ -338,7 +330,7 @@
     }
   }
 
-  // Atualiza texto da hash na UI
+  // Atualiza info da hash exibida
   function updateHashInfo() {
     if (location.hash) {
       const short = location.hash.slice(1, 9);
@@ -348,12 +340,12 @@
     }
   }
 
-  // Escape HTML básico
+  // Escapa HTML básico para o preview
   function escapeHtml(str) {
     return str.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
   }
 
-  // Highlighters simples para algumas linguagens
+  // Destaque simples para linguagens
   const HIGHLIGHTERS = {
     javascript: (s) =>
       escapeHtml(s)
@@ -395,7 +387,7 @@
     default: (s) => escapeHtml(s),
   };
 
-  // Detecta linguagem básica
+  // Detecta linguagem para highlight
   function detectLang(text) {
     const t = text.slice(0, 2000).toLowerCase();
     if (t.includes("<?php") || /<\s*html/.test(t)) return "html";
@@ -407,7 +399,7 @@
     return "text";
   }
 
-  // Renderiza preview com destaque
+  // Renderiza preview
   function renderPreview() {
     const maxPreviewLength = 10000;
     const lang = langSelect.value === "auto" ? detectLang(editor.value) : langSelect.value;
@@ -417,4 +409,149 @@
     if (editor.value.length > maxPreviewLength) {
       codeBlock.innerHTML = `<i>Conteúdo muito grande para exibir preview (mais de ${maxPreviewLength} caracteres).</i>`;
     } else {
-      const html = (HIGHLIGHTERS[lang] || HIGHLIGHTERS.default)(editor.value || "
+      const html = (HIGHLIGHTERS[lang] || HIGHLIGHTERS.default)(editor.value || " ");
+      codeBlock.innerHTML = html;
+    }
+  }
+
+  // Copiar para área de transferência
+  async function copyToClipboard() {
+    try {
+      await navigator.clipboard.writeText(editor.value);
+      alert("Conteúdo copiado para a área de transferência.");
+    } catch {
+      prompt("Copie o texto manualmente:", editor.value);
+    }
+  }
+
+  // Download do conteúdo
+  function downloadContent(filename, content) {
+    const blob = new Blob([content], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 100);
+  }
+
+  // Alternar tema claro/escuro
+  function toggleTheme() {
+    if (document.body.style.filter === "invert(1) hue-rotate(180deg)") {
+      document.body.style.filter = "";
+    } else {
+      document.body.style.filter = "invert(1) hue-rotate(180deg)";
+    }
+  }
+
+  // Função salvar & gerar link (hash com base64 json)
+  function saveAndGenerateLink() {
+    const data = {
+      title: titleInput.value,
+      lang: langSelect.value,
+      content: editor.value,
+      savedLocally: expansionSelect.value === "local",
+    };
+
+    // Se marcar salvar local, salva no localStorage
+    if (data.savedLocally) {
+      try {
+        localStorage.setItem("kitsune_paste_local", JSON.stringify(data));
+      } catch {}
+    }
+
+    setHashFromData(data);
+    alert("Link gerado! Copie a URL do navegador para compartilhar.");
+  }
+
+  // Carrega dados da hash ou do localStorage
+  function loadData() {
+    const dataFromHash = readDataFromHash();
+    if (dataFromHash) {
+      titleInput.value = dataFromHash.title || "";
+      langSelect.value = dataFromHash.lang || "auto";
+      editor.value = dataFromHash.content || "";
+      expansionSelect.value = dataFromHash.savedLocally ? "local" : "none";
+      renderPreview();
+      return;
+    }
+
+    // Se não tiver hash, tenta localStorage
+    try {
+      const localData = localStorage.getItem("kitsune_paste_local");
+      if (localData) {
+        const obj = JSON.parse(localData);
+        titleInput.value = obj.title || "";
+        langSelect.value = obj.lang || "auto";
+        editor.value = obj.content || "";
+        expansionSelect.value = obj.savedLocally ? "local" : "none";
+        renderPreview();
+      }
+    } catch {}
+  }
+
+  // Limpar tudo
+  function clearAll() {
+    if (!confirm("Tem certeza que deseja limpar todo o conteúdo?")) return;
+    titleInput.value = "";
+    langSelect.value = "auto";
+    expansionSelect.value = "none";
+    editor.value = "";
+    location.hash = "";
+    updateHashInfo();
+    renderPreview();
+  }
+
+  // Abrir RAW (conteúdo puro) em nova aba
+  function openRaw() {
+    const rawWindow = window.open();
+    rawWindow.document.write(`<pre>${escapeHtml(editor.value)}</pre>`);
+    rawWindow.document.title = titleInput.value || "RAW - Kitsune Paste";
+    rawWindow.document.close();
+  }
+
+  // Eventos
+  $("saveBtn").addEventListener("click", () => {
+    saveAndGenerateLink();
+  });
+  $("copyBtn").addEventListener("click", () => {
+    copyToClipboard();
+  });
+  $("downloadBtn").addEventListener("click", () => {
+    const filename = (titleInput.value.trim() || "paste") + ".txt";
+    downloadContent(filename, editor.value);
+  });
+  $("clearBtn").addEventListener("click", () => {
+    clearAll();
+  });
+  $("rawBtn").addEventListener("click", () => {
+    openRaw();
+  });
+  themeBtn.addEventListener("click", () => {
+    toggleTheme();
+  });
+
+  // Atualiza preview ao digitar e mudar idioma/título
+  editor.addEventListener("input", renderPreview);
+  langSelect.addEventListener("change", renderPreview);
+  titleInput.addEventListener("input", renderPreview);
+
+  // Inicialização
+  loadData();
+  updateHashInfo();
+  renderPreview();
+
+  // Atualiza hash info se URL mudar externamente
+  window.addEventListener("hashchange", () => {
+    loadData();
+    updateHashInfo();
+    renderPreview();
+  });
+})();
+</script>
+</body>
+</html>
