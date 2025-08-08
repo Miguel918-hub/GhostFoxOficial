@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>🦊 Kitsune Paste — Clone</title>
+<title>🦊 Kitsune Paste — Completo</title>
 <style>
   :root {
     --bg: #0b0e0f;
@@ -21,13 +21,7 @@
   body {
     margin: 0;
     min-height: 100vh;
-    background: radial-gradient(
-        800px 300px at 10% 10%,
-        rgba(45, 211, 111, 0.03),
-        transparent
-      ),
-      radial-gradient(600px 300px at 90% 90%, rgba(45, 211, 111, 0.02), transparent),
-      var(--bg);
+    background: var(--bg);
     color: #dfeeea;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -41,17 +35,19 @@
     gap: 18px;
   }
   .card {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent);
+    background: var(--panel);
     border-radius: 10px;
-    padding: 14px;
+    padding: 16px;
     box-shadow: 0 6px 30px rgba(2, 6, 6, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
   }
   header {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
   }
   .logo {
     width: 48px;
@@ -67,18 +63,18 @@
     font-size: 30px;
   }
   h1 {
-    font-size: 18px;
+    font-size: 20px;
     margin: 0;
   }
   p.lead {
     margin: 0;
     color: var(--muted);
-    font-size: 13px;
+    font-size: 14px;
   }
   label {
     display: block;
     font-size: 13px;
-    margin: 10px 0 6px;
+    margin: 14px 0 6px;
     color: var(--muted);
     user-select: none;
   }
@@ -87,35 +83,37 @@
     width: 100%;
     padding: 10px 12px;
     border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.03);
-    background: var(--panel);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    background: var(--bg);
     color: inherit;
     outline: none;
     font-size: 14px;
   }
   textarea {
     width: 100%;
-    min-height: 360px;
+    min-height: 400px;
     resize: vertical;
     padding: 12px;
     border-radius: 10px;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), transparent);
-    border: 1px solid rgba(255, 255, 255, 0.03);
+    background: var(--bg);
+    border: 1px solid rgba(255, 255, 255, 0.05);
     color: #dff7ea;
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
     font-size: 13px;
     line-height: 1.4;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
   }
   .actions {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     flex-wrap: wrap;
-    margin-top: 10px;
+    margin-top: 14px;
   }
   button {
-    padding: 9px 12px;
+    padding: 10px 14px;
     border-radius: 8px;
-    border: 0;
+    border: none;
     background: var(--glass);
     color: var(--muted);
     cursor: pointer;
@@ -138,7 +136,7 @@
   }
   button.ghost {
     background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
   }
   button.ghost:hover {
     background: var(--accent);
@@ -156,14 +154,15 @@
   .preview {
     padding: 12px;
     border-radius: 8px;
-    height: 520px;
+    height: 500px;
     overflow: auto;
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(255, 255, 255, 0.01));
-    border: 1px solid rgba(255, 255, 255, 0.02);
+    background: var(--panel);
+    border: 1px solid rgba(255, 255, 255, 0.04);
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
     font-size: 13px;
     white-space: pre-wrap;
     word-break: break-word;
+    user-select: text;
   }
   pre {
     margin: 0;
@@ -173,7 +172,7 @@
     gap: 8px;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
     user-select: none;
   }
   .small {
@@ -182,7 +181,7 @@
   }
   .badge {
     background: rgba(0, 0, 0, 0.25);
-    padding: 6px 8px;
+    padding: 6px 10px;
     border-radius: 999px;
     font-weight: 600;
   }
@@ -192,136 +191,113 @@
       padding: 12px;
     }
     .preview {
-      height: 360px;
+      height: 320px;
     }
-  }
-  /* syntax highlight styles */
-  .tok-k {
-    color: #7ee787;
-    font-weight: 600;
-  }
-  .tok-fn {
-    color: #8fdaf0;
-  }
-  .tok-str {
-    color: #ffd38a;
-  }
-  .tok-cm {
-    color: #7b8b8b;
-    font-style: italic;
   }
 </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="card">
+    <section class="card" aria-label="Editor de código">
       <header>
         <div class="logo" aria-label="Logo Kitsune Paste">🦊</div>
         <div>
-          <h1>🦊 Kitsune Paste — Clone</h1>
-          <p class="lead">Cole seu código, escolha a linguagem e compartilhe via URL (sem servidor).</p>
+          <h1>🦊 Kitsune Paste — Completo</h1>
+          <p class="lead">Cole seu código, escolha linguagem e compartilhe via URL (hash).</p>
         </div>
       </header>
 
-      <label for="title">Título</label>
-      <input id="title" placeholder="Título do paste (opcional)" autocomplete="off" />
+      <label for="title">Título (opcional)</label>
+      <input id="title" type="text" placeholder="Título do paste" autocomplete="off" />
 
       <label for="lang">Linguagem</label>
-      <div style="display: flex; gap: 8px;">
-        <select id="lang" aria-label="Seleção de linguagem">
-          <option value="auto">Detectar / Texto</option>
-          <option value="javascript">JavaScript</option>
-          <option value="lua">Lua</option>
-          <option value="python">Python</option>
-          <option value="html">HTML</option>
-          <option value="css">CSS</option>
-          <option value="bash">Bash</option>
-          <option value="json">JSON</option>
-          <option value="text">Texto</option>
-        </select>
-        <select id="expansion" aria-label="Salvar localmente">
-          <option value="none">Sem expiração</option>
-          <option value="local">Salvar localmente</option>
-        </select>
-      </div>
+      <select id="lang" aria-label="Selecionar linguagem">
+        <option value="auto">Detectar / Texto</option>
+        <option value="javascript">JavaScript</option>
+        <option value="lua">Lua</option>
+        <option value="python">Python</option>
+        <option value="html">HTML</option>
+        <option value="css">CSS</option>
+        <option value="bash">Bash</option>
+        <option value="json">JSON</option>
+        <option value="text">Texto</option>
+      </select>
 
-      <label for="editor">Conteúdo</label>
+      <label for="expansion">Salvar localmente?</label>
+      <select id="expansion" aria-label="Salvar localmente">
+        <option value="none">Não</option>
+        <option value="local">Sim (localStorage)</option>
+      </select>
+
+      <label for="editor">Conteúdo do código</label>
       <textarea id="editor" placeholder="// Cole seu código aqui..."></textarea>
 
       <div class="actions">
-        <button class="primary" id="saveBtn" type="button" title="Salvar e gerar URL para compartilhar">Salvar & Gerar Link</button>
-        <button id="rawBtn" class="ghost" type="button" title="Abrir conteúdo RAW em nova aba">Abrir Script 🦊 (RAW)</button>
-        <button id="copyBtn" type="button" title="Copiar conteúdo para área de transferência">Copiar</button>
+        <button class="primary" id="saveBtn" type="button" title="Salvar & gerar link (hash)">Salvar & Gerar Link</button>
+        <button id="rawBtn" class="ghost" type="button" title="Abrir conteúdo RAW em nova aba">Abrir RAW</button>
+        <button id="copyBtn" type="button" title="Copiar para área de transferência">Copiar</button>
         <button id="downloadBtn" type="button" title="Download do arquivo">Download</button>
         <button id="clearBtn" class="warn" type="button" title="Limpar tudo">Limpar</button>
-        <button id="themeBtn" style="margin-left: auto" class="ghost" type="button" title="Alternar tema claro/escuro">
-          Alternar Tema
-        </button>
+        <button id="themeBtn" class="ghost" type="button" title="Alternar tema claro/escuro" style="margin-left:auto;">Alternar Tema</button>
       </div>
+    </section>
 
-      <footer>
-        <div style="display: flex; justify-content: space-between; align-items: center">
-          <div class="small">Compartilhe a URL gerada — o conteúdo fica codificado na hash.</div>
-          <div class="small">Local only • Sem servidor</div>
-        </div>
-      </footer>
-    </div>
-
-    <div class="card" aria-live="polite" aria-atomic="true">
+    <section class="card" aria-label="Visualizador do código">
       <div class="meta">
         <div>
-          <div style="display: flex; gap: 8px; align-items: center">
-            <div class="badge" id="badgeLang">Texto</div>
-            <div class="small" id="pasteTitle">—</div>
-          </div>
+          <span class="badge" id="badgeLang">Texto</span>
+          <span class="small" id="pasteTitle">—</span>
         </div>
         <div class="small" id="hashInfo">URL: —</div>
       </div>
 
-      <div class="preview" id="preview" role="region" aria-label="Preview do conteúdo do paste">
-        <pre id="highlight"><code id="codeBlock" class="language-text">Cole ou gere um paste para visualizar aqui...</code></pre>
-      </div>
-    </div>
+      <pre class="preview" id="preview" tabindex="0" aria-live="polite" aria-atomic="true"></pre>
+    </section>
   </div>
 
 <script>
 (() => {
   const $ = (id) => document.getElementById(id);
   const editor = $("editor");
-  const codeBlock = $("codeBlock");
+  const preview = $("preview");
   const badgeLang = $("badgeLang");
   const pasteTitle = $("pasteTitle");
   const hashInfo = $("hashInfo");
   const langSelect = $("lang");
   const titleInput = $("title");
   const expansionSelect = $("expansion");
+  const saveBtn = $("saveBtn");
+  const rawBtn = $("rawBtn");
+  const copyBtn = $("copyBtn");
+  const downloadBtn = $("downloadBtn");
+  const clearBtn = $("clearBtn");
   const themeBtn = $("themeBtn");
 
-  // Base64 encode/decode com tratamento para unicode
-  function b64enc(s) {
-    return btoa(unescape(encodeURIComponent(s)));
+  // Base64 encode/decode UTF-8 safe
+  function b64enc(str) {
+    return btoa(unescape(encodeURIComponent(str)));
   }
-  function b64dec(s) {
+  function b64dec(str) {
     try {
-      return decodeURIComponent(escape(atob(s)));
+      return decodeURIComponent(escape(atob(str)));
     } catch {
       return null;
     }
   }
 
-  // Atualiza hash da URL com dados serializados
-  function setHashFromData(obj) {
-    const json = JSON.stringify(obj);
-    const b = b64enc(json);
-    location.hash = b;
+  // Atualiza hash com dados (título, lang, content)
+  function setHash(data) {
+    const json = JSON.stringify(data);
+    const encoded = b64enc(json);
+    location.hash = encoded;
     updateHashInfo();
   }
 
   // Lê dados da hash da URL
-  function readDataFromHash() {
+  function getHashData() {
     if (!location.hash) return null;
-    const b = location.hash.slice(1);
-    const json = b64dec(b);
+    const hash = location.hash.substring(1);
+    const json = b64dec(hash);
     if (!json) return null;
     try {
       return JSON.parse(json);
@@ -330,64 +306,17 @@
     }
   }
 
-  // Atualiza info da hash exibida
+  // Atualiza info da hash na UI
   function updateHashInfo() {
     if (location.hash) {
-      const short = location.hash.slice(1, 9);
-      hashInfo.textContent = "hash: #" + short + " • Copie a URL para compartilhar";
+      const short = location.hash.substring(1, 9);
+      hashInfo.textContent = "hash: #" + short + " • Compartilhe a URL para acessar";
     } else {
       hashInfo.textContent = "URL: —";
     }
   }
 
-  // Escapa HTML básico para o preview
-  function escapeHtml(str) {
-    return str.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-  }
-
-  // Destaque simples para linguagens
-  const HIGHLIGHTERS = {
-    javascript: (s) =>
-      escapeHtml(s)
-        .replace(/(\/\/.*$)/gm, '<span class="tok-cm">$1</span>')
-        .replace(/(".*?"|'.*?'|`.*?`)/g, '<span class="tok-str">$1</span>')
-        .replace(
-          /\b(const|let|var|function|return|if|else|for|while|switch|case|break|continue|new|class|extends|import|from|export|await|async|try|catch)\b/g,
-          '<span class="tok-k">$1</span>'
-        )
-        .replace(/\b([A-Za-z_]\w*)(?=\s*\()/g, '<span class="tok-fn">$1</span>'),
-    lua: (s) =>
-      escapeHtml(s)
-        .replace(/(--.*$)/gm, '<span class="tok-cm">$1</span>')
-        .replace(/(".*?"|'.*?')/g, '<span class="tok-str">$1</span>')
-        .replace(
-          /\b(local|function|end|if|then|else|for|in|while|do|repeat|until|return|nil|true|false)\b/g,
-          '<span class="tok-k">$1</span>'
-        )
-        .replace(/\b([A-Za-z_]\w*)(?=\s*\()/g, '<span class="tok-fn">$1</span>'),
-    python: (s) =>
-      escapeHtml(s)
-        .replace(/(#.*$)/gm, '<span class="tok-cm">$1</span>')
-        .replace(/(".*?"|'.*?')/g, '<span class="tok-str">$1</span>')
-        .replace(
-          /\b(def|class|return|if|elif|else|for|while|try|except|with|as|import|from|pass|break|continue|lambda|True|False|None)\b/g,
-          '<span class="tok-k">$1</span>'
-        )
-        .replace(/\b([A-Za-z_]\w*)(?=\s*\()/g, '<span class="tok-fn">$1</span>'),
-    html: (s) =>
-      escapeHtml(s)
-        .replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span class="tok-cm">$1</span>')
-        .replace(/(&lt;\/?[^\s&]+?)(\s|&gt;)/g, '<span class="tok-k">$1</span>$2')
-        .replace(/(".*?"|'.*?')/g, '<span class="tok-str">$1</span>'),
-    css: (s) =>
-      escapeHtml(s)
-        .replace(/(\/\*[\s\S]*?\*\/)/g, '<span class="tok-cm">$1</span>')
-        .replace(/([.#]?[a-zA-Z0-9\-\_]+)(?=\s*\{)/g, '<span class="tok-k">$1</span>')
-        .replace(/(:\s*)([^;}\n]+)/g, '$1<span class="tok-str">$2</span>'),
-    default: (s) => escapeHtml(s),
-  };
-
-  // Detecta linguagem para highlight
+  // Detecta linguagem básica para o badge e preview simples
   function detectLang(text) {
     const t = text.slice(0, 2000).toLowerCase();
     if (t.includes("<?php") || /<\s*html/.test(t)) return "html";
@@ -399,33 +328,27 @@
     return "text";
   }
 
-  // Renderiza preview
-  function renderPreview() {
-    const maxPreviewLength = 10000;
+  // Atualiza preview e badge sem alterar texto original
+  function updatePreview() {
     const lang = langSelect.value === "auto" ? detectLang(editor.value) : langSelect.value;
     badgeLang.textContent = lang;
     pasteTitle.textContent = titleInput.value || "—";
-
-    if (editor.value.length > maxPreviewLength) {
-      codeBlock.innerHTML = `<i>Conteúdo muito grande para exibir preview (mais de ${maxPreviewLength} caracteres).</i>`;
-    } else {
-      const html = (HIGHLIGHTERS[lang] || HIGHLIGHTERS.default)(editor.value || " ");
-      codeBlock.innerHTML = html;
-    }
+    // Preview com escape para mostrar texto original puro
+    preview.textContent = editor.value || "Cole ou gere um paste para visualizar aqui...";
   }
 
-  // Copiar para área de transferência
+  // Copia conteúdo original para clipboard
   async function copyToClipboard() {
     try {
       await navigator.clipboard.writeText(editor.value);
-      alert("Conteúdo copiado para a área de transferência.");
+      alert("Conteúdo copiado para a área de transferência!");
     } catch {
-      prompt("Copie o texto manualmente:", editor.value);
+      prompt("Copie manualmente:", editor.value);
     }
   }
 
-  // Download do conteúdo
-  function downloadContent(filename, content) {
+  // Faz download do arquivo
+  function downloadFile(filename, content) {
     const blob = new Blob([content], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -436,120 +359,174 @@
     setTimeout(() => {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-    }, 100);
+    }, 0);
   }
 
-  // Alternar tema claro/escuro
-  function toggleTheme() {
-    if (document.body.style.filter === "invert(1) hue-rotate(180deg)") {
-      document.body.style.filter = "";
-    } else {
-      document.body.style.filter = "invert(1) hue-rotate(180deg)";
+  // Carrega dados nos inputs
+  function loadData(data) {
+    if (!data) return;
+    titleInput.value = data.title || "";
+    langSelect.value = data.lang || "auto";
+    editor.value = data.content || "";
+    updatePreview();
+  }
+
+  // Salva local no localStorage
+  function saveLocal() {
+    if (expansionSelect.value !== "local") {
+      localStorage.removeItem("kitsune_paste");
+      return;
     }
-  }
-
-  // Função salvar & gerar link (hash com base64 json)
-  function saveAndGenerateLink() {
     const data = {
       title: titleInput.value,
       lang: langSelect.value,
       content: editor.value,
-      savedLocally: expansionSelect.value === "local",
     };
-
-    // Se marcar salvar local, salva no localStorage
-    if (data.savedLocally) {
-      try {
-        localStorage.setItem("kitsune_paste_local", JSON.stringify(data));
-      } catch {}
-    }
-
-    setHashFromData(data);
-    alert("Link gerado! Copie a URL do navegador para compartilhar.");
+    localStorage.setItem("kitsune_paste", JSON.stringify(data));
   }
 
-  // Carrega dados da hash ou do localStorage
-  function loadData() {
-    const dataFromHash = readDataFromHash();
-    if (dataFromHash) {
-      titleInput.value = dataFromHash.title || "";
-      langSelect.value = dataFromHash.lang || "auto";
-      editor.value = dataFromHash.content || "";
-      expansionSelect.value = dataFromHash.savedLocally ? "local" : "none";
-      renderPreview();
-      return;
-    }
-
-    // Se não tiver hash, tenta localStorage
+  // Carrega local do localStorage
+  function loadLocal() {
+    const raw = localStorage.getItem("kitsune_paste");
+    if (!raw) return null;
     try {
-      const localData = localStorage.getItem("kitsune_paste_local");
-      if (localData) {
-        const obj = JSON.parse(localData);
-        titleInput.value = obj.title || "";
-        langSelect.value = obj.lang || "auto";
-        editor.value = obj.content || "";
-        expansionSelect.value = obj.savedLocally ? "local" : "none";
-        renderPreview();
-      }
-    } catch {}
+      return JSON.parse(raw);
+    } catch {
+      return null;
+    }
   }
 
-  // Limpar tudo
-  function clearAll() {
+  // Alterna tema
+  function toggleTheme() {
+    const root = document.documentElement;
+    const isDark = root.style.getPropertyValue("--bg") === "#0b0e0f" || !root.style.getPropertyValue("--bg");
+    if (isDark) {
+      root.style.setProperty("--bg", "#fff");
+      root.style.setProperty("--panel", "#f0f0f0");
+      root.style.setProperty("--muted", "#666");
+      root.style.setProperty("--accent", "#2dd36f");
+      root.style.setProperty("--danger", "#ff6b6b");
+      root.style.setProperty("--glass", "rgba(0,0,0,0.05)");
+      document.body.style.color = "#222";
+    } else {
+      root.style.setProperty("--bg", "#0b0e0f");
+      root.style.setProperty("--panel", "#0f1515");
+      root.style.setProperty("--muted", "#98a3a3");
+      root.style.setProperty("--accent", "#2dd36f");
+      root.style.setProperty("--danger", "#ff6b6b");
+      root.style.setProperty("--glass", "rgba(255,255,255,0.03)");
+      document.body.style.color = "#dfeeea";
+    }
+  }
+
+  // Atualiza preview e salva local ao digitar/mudar
+  editor.addEventListener("input", () => {
+    updatePreview();
+    saveLocal();
+  });
+  titleInput.addEventListener("input", () => {
+    updatePreview();
+    saveLocal();
+  });
+  langSelect.addEventListener("change", () => {
+    updatePreview();
+    saveLocal();
+  });
+  expansionSelect.addEventListener("change", () => {
+    saveLocal();
+  });
+
+  // Botões
+  saveBtn.addEventListener("click", () => {
+    const data = {
+      title: titleInput.value,
+      lang: langSelect.value,
+      content: editor.value,
+    };
+    setHash(data);
+    alert("Link gerado! Copie a URL para compartilhar.");
+  });
+
+  rawBtn.addEventListener("click", () => {
+    // Abre o conteúdo puro em uma nova aba
+    const blob = new Blob([editor.value], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    window.open(url, "_blank");
+  });
+
+  copyBtn.addEventListener("click", () => {
+    copyToClipboard();
+  });
+
+  downloadBtn.addEventListener("click", () => {
+    let ext = "txt";
+    switch (langSelect.value) {
+      case "javascript":
+        ext = "js";
+        break;
+      case "lua":
+        ext = "lua";
+        break;
+      case "python":
+        ext = "py";
+        break;
+      case "html":
+        ext = "html";
+        break;
+      case "css":
+        ext = "css";
+        break;
+      case "bash":
+        ext = "sh";
+        break;
+      case "json":
+        ext = "json";
+        break;
+    }
+    const filename = (titleInput.value.trim() || "paste") + "." + ext;
+    downloadFile(filename, editor.value);
+  });
+
+  clearBtn.addEventListener("click", () => {
     if (!confirm("Tem certeza que deseja limpar todo o conteúdo?")) return;
     titleInput.value = "";
     langSelect.value = "auto";
     expansionSelect.value = "none";
     editor.value = "";
+    updatePreview();
+    localStorage.removeItem("kitsune_paste");
     location.hash = "";
     updateHashInfo();
-    renderPreview();
-  }
+  });
 
-  // Abrir RAW (conteúdo puro) em nova aba
-  function openRaw() {
-    const rawWindow = window.open();
-    rawWindow.document.write(`<pre>${escapeHtml(editor.value)}</pre>`);
-    rawWindow.document.title = titleInput.value || "RAW - Kitsune Paste";
-    rawWindow.document.close();
-  }
-
-  // Eventos
-  $("saveBtn").addEventListener("click", () => {
-    saveAndGenerateLink();
-  });
-  $("copyBtn").addEventListener("click", () => {
-    copyToClipboard();
-  });
-  $("downloadBtn").addEventListener("click", () => {
-    const filename = (titleInput.value.trim() || "paste") + ".txt";
-    downloadContent(filename, editor.value);
-  });
-  $("clearBtn").addEventListener("click", () => {
-    clearAll();
-  });
-  $("rawBtn").addEventListener("click", () => {
-    openRaw();
-  });
   themeBtn.addEventListener("click", () => {
     toggleTheme();
   });
 
-  // Atualiza preview ao digitar e mudar idioma/título
-  editor.addEventListener("input", renderPreview);
-  langSelect.addEventListener("change", renderPreview);
-  titleInput.addEventListener("input", renderPreview);
-
-  // Inicialização
-  loadData();
-  updateHashInfo();
-  renderPreview();
-
-  // Atualiza hash info se URL mudar externamente
-  window.addEventListener("hashchange", () => {
-    loadData();
+  // Carrega dados da URL e localStorage no carregamento
+  window.addEventListener("load", () => {
+    // Carrega do hash primeiro
+    const data = getHashData();
+    if (data) {
+      loadData(data);
+    } else {
+      // Se não, carrega localStorage
+      const localData = loadLocal();
+      if (localData) {
+        loadData(localData);
+      }
+    }
     updateHashInfo();
-    renderPreview();
+  });
+
+  // Atualiza preview inicial
+  updatePreview();
+
+  // Atualiza hashInfo se mudar a hash manualmente
+  window.addEventListener("hashchange", () => {
+    const data = getHashData();
+    if (data) loadData(data);
+    updateHashInfo();
   });
 })();
 </script>
